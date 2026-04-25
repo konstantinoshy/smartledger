@@ -1,0 +1,29 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <color name="sl_background">#FF121212</color>
+    <color name="sl_main_bg">#FF121212</color>
+    <color name="sl_app_bar">#FF1E1E1E</color>
+    <color name="sl_surface">#FF2C2C2E</color>
+    <color name="sl_bottom_nav">#FF1E1E1E</color>
+    <color name="sl_card_gray">#FF3A3A3C</color>
+    <color name="sl_search_bg">#FF3A3A3C</color>
+    <color name="sl_chip_inactive_bg">#FF3A3A3C</color>
+
+    <color name="sl_text_primary">#FFF5F5F5</color>
+    <color name="sl_text_secondary">#FFAEAEB2</color>
+    <color name="sl_text_tertiary">#FF8E8E93</color>
+    <color name="sl_text_brand_muted">#99E8E8E8</color>
+    <color name="sl_text_overline_muted">#99AEAEB2</color>
+    <color name="sl_text_label_muted">#B3AEAEB2</color>
+    <color name="sl_text_hint_muted">#99AEAEB2</color>
+    <color name="sl_text_empty_muted">#99AEAEB2</color>
+    <color name="sl_text_body">#FFAEAEB2</color>
+    <color name="sl_text_body_muted">#99AEAEB2</color>
+
+    <color name="sl_nav_selected">#FFF5F5F5</color>
+    <color name="sl_nav_unselected">#FF8E8E93</color>
+
+    <color name="sl_divider">#FF48484A</color>
+    <color name="sl_stroke">#FF636366</color>
+    <color name="sl_search_icon_tint">#99AEAEB2</color>
+</resources>

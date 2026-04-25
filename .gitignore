@@ -1,0 +1,27 @@
+# Android και Gradle
+.gradle/
+android/.gradle/
+android/build/
+android/app/build/
+android/app/bin/
+android/local.properties
+*.keystore
+*.jks
+
+# Αρχεία build
+build/
+*.apk
+*.aab
+*.zip
+
+# Αρχεία συστήματος
+.DS_Store
+*.log
+
+# Μεταβλητές περιβάλλοντος
+.env*
+
+# Ρυθμίσεις IDE
+.idea/
+.vscode/
+android/.vscode/

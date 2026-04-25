@@ -1,0 +1,14 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <dimen name="sl_screen_padding_horizontal">24dp</dimen>
+    <dimen name="sl_screen_padding_vertical">24dp</dimen>
+    <dimen name="sl_toolbar_logo_size">40dp</dimen>
+    <dimen name="sl_toolbar_end_padding">16dp</dimen>
+    <dimen name="sl_card_radius_large">32dp</dimen>
+    <dimen name="sl_card_radius_medium">16dp</dimen>
+    <dimen name="sl_card_radius_small">12dp</dimen>
+    <dimen name="sl_login_header_logo">48dp</dimen>
+    <dimen name="sl_login_hero_icon">64dp</dimen>
+    <dimen name="sl_section_spacing">24dp</dimen>
+    <dimen name="sl_bento_gap">8dp</dimen>
+</resources>

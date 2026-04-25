@@ -1,0 +1,55 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <color name="white">#FFFFFFFF</color>
+    <color name="black">#FF000000</color>
+
+    <!-- Brand χρώματα -->
+    <color name="sl_primary">#FF10B981</color>
+    <color name="sl_primary_dark">#FF059669</color>
+    <color name="sl_navy">#FF0A192F</color>
+    <color name="sl_navy_card">#FF0D1C32</color>
+
+    <!-- Επιφάνειες -->
+    <color name="sl_background">#FFF7F9FB</color>
+    <color name="sl_main_bg">#FFFAFAFA</color>
+    <color name="sl_app_bar">#FFF2F4F6</color>
+    <color name="sl_surface">#FFFFFFFF</color>
+    <color name="sl_bottom_nav">#FFFFFFFF</color>
+    <color name="sl_card_gray">#FFE0E3E5</color>
+    <color name="sl_search_bg">#FFECEEF0</color>
+    <color name="sl_chip_inactive_bg">#FFF2F4F6</color>
+
+    <!-- Κείμενο -->
+    <color name="sl_text_primary">#FF000000</color>
+    <color name="sl_text_secondary">#FF44474D</color>
+    <color name="sl_text_tertiary">#FF888888</color>
+    <color name="sl_text_on_dark">#FFFFFFFF</color>
+    <color name="sl_text_brand_muted">#660A192F</color>
+    <color name="sl_text_overline_muted">#9944474D</color>
+    <color name="sl_text_label_muted">#B344474D</color>
+    <color name="sl_text_hint_muted">#6644474D</color>
+    <color name="sl_text_empty_muted">#8044474D</color>
+    <color name="sl_text_body">#FF4A5568</color>
+    <color name="sl_text_body_muted">#994A5568</color>
+    <color name="sl_text_on_dark_secondary">#99FFFFFF</color>
+    <color name="sl_text_on_primary_muted">#B3FFFFFF</color>
+
+    <!-- Καταστάσεις UI -->
+    <color name="sl_positive">#FF046D40</color>
+    <color name="sl_positive_dark">#FF0E7144</color>
+    <color name="sl_mint">#FF9AF2BA</color>
+    <color name="sl_mint_on_mint">#CC0E7144</color>
+    <color name="sl_divider">#FFE0E0E0</color>
+    <color name="sl_stroke">#FFC5C6CD</color>
+    <color name="sl_crypto_subtitle">#FF76849F</color>
+    <color name="sl_crypto_negative">#FFFFDAD6</color>
+    <color name="sl_icon_scrim">#1AFFFFFF</color>
+    <color name="sl_warning">#FFD32F2F</color>
+    <color name="sl_amber">#FFF59E0B</color>
+    <color name="sl_amber_bg">#FFFEF3C7</color>
+    <color name="sl_search_icon_tint">#8044474D</color>
+
+    <!-- Πλοήγηση -->
+    <color name="sl_nav_selected">#FF1A1A1A</color>
+    <color name="sl_nav_unselected">#FF888888</color>
+</resources>
