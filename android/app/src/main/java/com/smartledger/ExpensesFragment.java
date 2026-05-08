@@ -38,6 +38,7 @@ public class ExpensesFragment extends Fragment {
     private TextView tvEmptyState;
     private TextView tvMonthlySpend;
     private String activeFilter = null;
+    private android.widget.ProgressBar progressBar;
 
     @Nullable
     @Override
@@ -47,6 +48,7 @@ public class ExpensesFragment extends Fragment {
         recyclerView = view.findViewById(R.id.recycler_expenses);
         tvEmptyState = view.findViewById(R.id.tv_empty_state);
         tvMonthlySpend = view.findViewById(R.id.tv_monthly_spend);
+        progressBar = view.findViewById(R.id.progress_bar);
 
         expenseRepository = ExpenseRepository.getInstance(requireContext());
         allExpenses = new ArrayList<>();
@@ -106,15 +108,18 @@ public class ExpensesFragment extends Fragment {
     }
 
     private void loadExpenses() {
+        if (progressBar != null) progressBar.setVisibility(View.VISIBLE);
         expenseRepository.getExpenses(new ExpenseRepository.ExpenseListCallback() {
             @Override
             public void onSuccess(List<Expense> expenses) {
+                if (progressBar != null) progressBar.setVisibility(View.GONE);
                 allExpenses = expenses;
                 refreshList();
             }
 
             @Override
             public void onError(String message) {
+                if (progressBar != null) progressBar.setVisibility(View.GONE);
                 if (getView() != null) {
                     Snackbar.make(getView(), message, Snackbar.LENGTH_LONG).show();
                 }
@@ -135,11 +140,8 @@ public class ExpensesFragment extends Fragment {
 
     private void updateMonthlySpend() {
         if (tvMonthlySpend == null) return;
-        double total = 0;
-        for (Expense e : allExpenses) {
-            total += e.getAmount();
-        }
-        tvMonthlySpend.setText(String.format("$%,.2f", total));
+        double total = com.smartledger.utils.FinancialUtils.calculateTotalSpent(allExpenses);
+        tvMonthlySpend.setText(String.format(java.util.Locale.getDefault(), "$%,.2f", total));
     }
 
     private void showAddExpenseDialog() {
@@ -164,9 +166,9 @@ public class ExpensesFragment extends Fragment {
         dialog.show();
 
         dialog.getButton(androidx.appcompat.app.AlertDialog.BUTTON_POSITIVE).setOnClickListener(v -> {
-            String desc = tilDesc.getEditText().getText().toString().trim();
+            String desc = tilDesc.getEditText() != null ? tilDesc.getEditText().getText().toString().trim() : "";
             String cat = editCat.getText().toString().trim();
-            String amtStr = tilAmount.getEditText().getText().toString().trim();
+            String amtStr = tilAmount.getEditText() != null ? tilAmount.getEditText().getText().toString().trim() : "";
 
             boolean valid = true;
             tilDesc.setError(null);
@@ -197,9 +199,11 @@ public class ExpensesFragment extends Fragment {
             double amount = Double.parseDouble(amtStr);
             if (cat.isEmpty()) cat = "General";
 
+            if (progressBar != null) progressBar.setVisibility(View.VISIBLE);
             expenseRepository.addExpense(amount, cat, desc, new ExpenseRepository.ExpenseCallback() {
                 @Override
                 public void onSuccess(Expense expense) {
+                    if (progressBar != null) progressBar.setVisibility(View.GONE);
                     loadExpenses();
                     recyclerView.scrollToPosition(0);
                     dialog.dismiss();
@@ -211,6 +215,7 @@ public class ExpensesFragment extends Fragment {
 
                 @Override
                 public void onError(String message) {
+                    if (progressBar != null) progressBar.setVisibility(View.GONE);
                     if (getView() != null) {
                         Snackbar.make(getView(), message, Snackbar.LENGTH_LONG).show();
                     }
