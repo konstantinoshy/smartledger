@@ -34,14 +34,19 @@ public class LoginActivity extends AppCompatActivity {
     }
 
     private void authenticate(boolean register) {
-        String email = tilEmail.getEditText().getText().toString().trim();
-        String password = tilPassword.getEditText().getText().toString();
+        String email = tilEmail.getEditText() != null ? tilEmail.getEditText().getText().toString().trim() : "";
+        String password = tilPassword.getEditText() != null ? tilPassword.getEditText().getText().toString() : "";
 
         tilEmail.setError(null);
         tilPassword.setError(null);
 
         if (email.isEmpty()) {
             tilEmail.setError("Email is required");
+            return;
+        }
+
+        if (!android.util.Patterns.EMAIL_ADDRESS.matcher(email).matches()) {
+            tilEmail.setError("Please enter a valid email address");
             return;
         }
 
