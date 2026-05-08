@@ -2,11 +2,16 @@ package com.smartledger.data;
 
 import android.content.Context;
 
+import android.os.Handler;
+import android.os.Looper;
+
 import com.smartledger.api.ApiClient;
 import com.smartledger.api.SessionManager;
 import com.smartledger.api.SmartLedgerApi;
 import com.smartledger.api.dto.CreateExpenseRequest;
 import com.smartledger.api.dto.ExpenseDto;
+import com.smartledger.data.local.AppDatabase;
+import com.smartledger.data.local.ExpenseDao;
 import com.smartledger.models.Expense;
 
 import java.text.SimpleDateFormat;
@@ -15,6 +20,8 @@ import java.util.Date;
 import java.util.List;
 import java.util.Locale;
 import java.util.TimeZone;
+import java.util.concurrent.ExecutorService;
+import java.util.concurrent.Executors;
 
 import retrofit2.Call;
 import retrofit2.Callback;
@@ -36,10 +43,16 @@ public class ExpenseRepository {
 
     private final SessionManager sessionManager;
     private final SmartLedgerApi api;
+    private final ExpenseDao expenseDao;
+    private final ExecutorService executor;
+    private final Handler mainHandler;
 
     private ExpenseRepository(Context context) {
         sessionManager = new SessionManager(context);
         api = ApiClient.getApi(sessionManager);
+        expenseDao = AppDatabase.getDatabase(context).expenseDao();
+        executor = Executors.newSingleThreadExecutor();
+        mainHandler = new Handler(Looper.getMainLooper());
     }
 
     public static ExpenseRepository getInstance(Context context) {
@@ -54,7 +67,7 @@ public class ExpenseRepository {
             @Override
             public void onResponse(Call<List<ExpenseDto>> call, Response<List<ExpenseDto>> response) {
                 if (!response.isSuccessful() || response.body() == null) {
-                    callback.onError("Could not load expenses.");
+                    loadFromLocalDatabase(callback, "Server returned error. Showing offline data.");
                     return;
                 }
 
@@ -62,13 +75,35 @@ public class ExpenseRepository {
                 for (ExpenseDto dto : response.body()) {
                     expenses.add(toExpense(dto));
                 }
+
+                // Αποθήκευση στην τοπική βάση Room (Cache)
+                executor.execute(() -> {
+                    expenseDao.clearAll();
+                    expenseDao.insertAll(expenses);
+                });
+
                 callback.onSuccess(expenses);
             }
 
             @Override
             public void onFailure(Call<List<ExpenseDto>> call, Throwable t) {
-                callback.onError("Supabase unavailable. Check project URL and network.");
+                loadFromLocalDatabase(callback, "You are offline. Showing cached expenses.");
             }
+        });
+    }
+
+    private void loadFromLocalDatabase(ExpenseListCallback callback, String errorMessage) {
+        executor.execute(() -> {
+            List<Expense> localExpenses = expenseDao.getAllExpenses();
+            mainHandler.post(() -> {
+                if (!localExpenses.isEmpty()) {
+                    // Δείχνουμε τα cached δεδομένα αλλά ειδοποιούμε τον χρήστη
+                    callback.onError(errorMessage);
+                    callback.onSuccess(localExpenses);
+                } else {
+                    callback.onError("Network unavailable and no local data found.");
+                }
+            });
         });
     }
 
@@ -96,12 +131,17 @@ public class ExpenseRepository {
                     callback.onError("Could not save expense.");
                     return;
                 }
-                callback.onSuccess(toExpense(response.body().get(0)));
+                Expense newExpense = toExpense(response.body().get(0));
+
+                // Προσθήκη και στην τοπική βάση κατευθείαν για γρήγορη απόκριση
+                executor.execute(() -> expenseDao.insert(newExpense));
+
+                callback.onSuccess(newExpense);
             }
 
             @Override
             public void onFailure(Call<List<ExpenseDto>> call, Throwable t) {
-                callback.onError("Supabase unavailable. Check project URL and network.");
+                callback.onError("Cannot add expenses while offline.");
             }
         });
     }
