@@ -41,6 +41,7 @@ public class DashboardFragment extends Fragment {
     private TextView monthlySpendText;
     private TextView spendIndicatorText;
     private ImageView spendIndicatorIcon;
+    private android.widget.ProgressBar progressBar;
 
     @Nullable
     @Override
@@ -52,6 +53,7 @@ public class DashboardFragment extends Fragment {
         monthlySpendText = view.findViewById(R.id.text_monthly_spend);
         spendIndicatorText = view.findViewById(R.id.text_spend_indicator);
         spendIndicatorIcon = view.findViewById(R.id.icon_spend_indicator);
+        progressBar = view.findViewById(R.id.progress_bar);
 
         expenseRepository = ExpenseRepository.getInstance(requireContext());
         expenseList = new ArrayList<>();
@@ -85,9 +87,11 @@ public class DashboardFragment extends Fragment {
     }
 
     private void loadExpenses() {
+        if (progressBar != null) progressBar.setVisibility(View.VISIBLE);
         expenseRepository.getExpenses(new ExpenseRepository.ExpenseListCallback() {
             @Override
             public void onSuccess(List<Expense> expenses) {
+                if (progressBar != null) progressBar.setVisibility(View.GONE);
                 expenseList = expenses;
                 adapter.submitExpenses(expenseList);
                 updateTotal();
@@ -95,6 +99,7 @@ public class DashboardFragment extends Fragment {
 
             @Override
             public void onError(String message) {
+                if (progressBar != null) progressBar.setVisibility(View.GONE);
                 if (getView() != null) {
                     Snackbar.make(getView(), message, Snackbar.LENGTH_LONG).show();
                 }
@@ -103,14 +108,11 @@ public class DashboardFragment extends Fragment {
     }
 
     private void updateTotal() {
-        double totalSpent = 0;
-        for (Expense e : expenseList) {
-            totalSpent += e.getAmount();
-        }
+        double totalSpent = com.smartledger.utils.FinancialUtils.calculateTotalSpent(expenseList);
         double liquidity = 5000.00 - totalSpent;
-        totalExpensesText.setText(String.format("$%,.2f", liquidity));
+        totalExpensesText.setText(String.format(java.util.Locale.getDefault(), "$%,.2f", liquidity));
         if (monthlySpendText != null) {
-            monthlySpendText.setText(String.format("$%,.2f", totalSpent));
+            monthlySpendText.setText(String.format(java.util.Locale.getDefault(), "$%,.2f", totalSpent));
         }
         updateSpendIndicator(totalSpent);
     }
@@ -118,14 +120,14 @@ public class DashboardFragment extends Fragment {
     private void updateSpendIndicator(double totalSpent) {
         if (spendIndicatorText == null || spendIndicatorIcon == null || getContext() == null) return;
 
-        double percentSpent = (totalSpent / 5000.00) * 100;
+        double percentSpent = com.smartledger.utils.FinancialUtils.calculateBudgetPercentage(totalSpent, 5000.00);
         boolean highSpend = percentSpent >= 50;
 
         int colorRes = highSpend ? R.color.sl_warning : R.color.sl_positive;
         int iconRes = highSpend ? R.drawable.ic_trending_down : R.drawable.ic_trending_up;
         int color = ContextCompat.getColor(getContext(), colorRes);
 
-        spendIndicatorText.setText(String.format("%.1f%% of budget spent this month", percentSpent));
+        spendIndicatorText.setText(String.format(java.util.Locale.getDefault(), "%.1f%% of budget spent this month", percentSpent));
         spendIndicatorText.setTextColor(color);
         spendIndicatorIcon.setImageResource(iconRes);
         spendIndicatorIcon.setColorFilter(color);
@@ -153,9 +155,9 @@ public class DashboardFragment extends Fragment {
         dialog.show();
 
         dialog.getButton(androidx.appcompat.app.AlertDialog.BUTTON_POSITIVE).setOnClickListener(v -> {
-            String desc = tilDesc.getEditText().getText().toString().trim();
+            String desc = tilDesc.getEditText() != null ? tilDesc.getEditText().getText().toString().trim() : "";
             String cat = editCat.getText().toString().trim();
-            String amtStr = tilAmount.getEditText().getText().toString().trim();
+            String amtStr = tilAmount.getEditText() != null ? tilAmount.getEditText().getText().toString().trim() : "";
 
             boolean valid = true;
             tilDesc.setError(null);
