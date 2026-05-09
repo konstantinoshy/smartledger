@@ -22,6 +22,7 @@ public class Expense {
         this.id = java.util.UUID.randomUUID().toString();
     }
 
+    @androidx.room.Ignore
     public Expense(String userId, double amount, String category, String description, Date date) {
         this.id = java.util.UUID.randomUUID().toString();
         this.userId = userId;
@@ -32,6 +33,7 @@ public class Expense {
         this.createdAt = new Date();
     }
 
+    @androidx.room.Ignore
     public Expense(String id, String userId, double amount, String category, String description, Date date, Date createdAt) {
         this.id = id;
         this.userId = userId;

@@ -8,14 +8,24 @@ import androidx.room.RoomDatabase;
 import androidx.room.TypeConverters;
 
 import com.smartledger.models.Expense;
+import com.smartledger.models.PortfolioAsset;
+import com.smartledger.models.SplitExpense;
+import com.smartledger.models.SplitGroup;
 
-@Database(entities = {Expense.class}, version = 1, exportSchema = false)
+@Database(
+    entities = {Expense.class, SplitGroup.class, SplitExpense.class, PortfolioAsset.class},
+    version = 2,
+    exportSchema = false
+)
 @TypeConverters({Converters.class})
 public abstract class AppDatabase extends RoomDatabase {
 
     private static volatile AppDatabase INSTANCE;
 
     public abstract ExpenseDao expenseDao();
+    public abstract SplitGroupDao splitGroupDao();
+    public abstract SplitExpenseDao splitExpenseDao();
+    public abstract PortfolioAssetDao portfolioAssetDao();
 
     public static AppDatabase getDatabase(final Context context) {
         if (INSTANCE == null) {
