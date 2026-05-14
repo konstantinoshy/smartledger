@@ -22,18 +22,11 @@
                 android:orientation="horizontal"
                 android:paddingEnd="@dimen/sl_toolbar_end_padding">
 
-                <com.google.android.material.imageview.ShapeableImageView
-                    android:layout_width="@dimen/sl_toolbar_logo_size"
-                    android:layout_height="@dimen/sl_toolbar_logo_size"
-                    android:contentDescription="@string/app_name"
-                    android:scaleType="centerCrop"
-                    android:src="@drawable/smartledger_logo"
-                    app:shapeAppearanceOverlay="@style/ShapeAppearance.SmartLedger.Circle" />
+                <!-- Removed redundant logo -->
 
                 <TextView
                     android:layout_width="0dp"
                     android:layout_height="wrap_content"
-                    android:layout_marginStart="16dp"
                     android:layout_weight="1"
                     android:text="SmartLedger"
                     android:textColor="@color/sl_text_primary"
@@ -79,16 +72,17 @@
                             android:layout_height="wrap_content"
                             android:text="Split Settlements"
                             android:textColor="@color/sl_text_primary"
-                            android:textSize="32sp"
-                            android:textStyle="bold" />
+                            android:textSize="36sp"
+                            android:fontFamily="sans-serif-black" />
 
                         <TextView
                             android:layout_width="wrap_content"
                             android:layout_height="wrap_content"
-                            android:layout_marginTop="4dp"
+                            android:layout_marginTop="8dp"
                             android:text="Shared expenses across your circles."
                             android:textColor="@color/sl_text_secondary"
-                            android:textStyle="bold" />
+                            android:textSize="14sp"
+                            android:fontFamily="sans-serif-medium" />
                     </LinearLayout>
 
                     <com.google.android.material.floatingactionbutton.ExtendedFloatingActionButton
@@ -100,6 +94,7 @@
                         android:textColor="@color/sl_text_on_dark"
                         app:backgroundTint="@color/sl_navy_card"
                         app:collapsedSize="48dp"
+                        app:shapeAppearanceOverlay="@style/ShapeAppearance.Material3.Corner.Full"
                         app:icon="@android:drawable/ic_input_add"
                         app:iconTint="@color/sl_text_on_dark" />
                 </LinearLayout>

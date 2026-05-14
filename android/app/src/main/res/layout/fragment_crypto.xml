@@ -21,18 +21,11 @@
                 android:orientation="horizontal"
                 android:paddingEnd="@dimen/sl_toolbar_end_padding">
 
-                <com.google.android.material.imageview.ShapeableImageView
-                    android:layout_width="@dimen/sl_toolbar_logo_size"
-                    android:layout_height="@dimen/sl_toolbar_logo_size"
-                    android:contentDescription="@string/app_name"
-                    android:scaleType="centerCrop"
-                    android:src="@drawable/smartledger_logo"
-                    app:shapeAppearanceOverlay="@style/ShapeAppearance.SmartLedger.Circle" />
+                <!-- Removed redundant logo -->
 
                 <TextView
                     android:layout_width="0dp"
                     android:layout_height="wrap_content"
-                    android:layout_marginStart="16dp"
                     android:layout_weight="1"
                     android:text="SmartLedger"
                     android:textColor="@color/sl_text_primary"
@@ -64,13 +57,13 @@
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
                     android:layout_marginBottom="@dimen/sl_section_spacing"
-                    app:cardBackgroundColor="@color/black"
                     app:cardCornerRadius="@dimen/sl_card_radius_large"
                     app:cardElevation="0dp">
 
                     <LinearLayout
                         android:layout_width="match_parent"
                         android:layout_height="wrap_content"
+                        android:background="@drawable/bg_hero_gradient"
                         android:orientation="vertical"
                         android:padding="32dp">
 
@@ -91,7 +84,7 @@
                             android:text="$0.00"
                             android:textColor="@color/sl_text_on_dark"
                             android:textSize="48sp"
-                            android:textStyle="bold" />
+                            android:fontFamily="sans-serif-black" />
 
                         <LinearLayout
                             android:layout_width="wrap_content"
@@ -103,12 +96,12 @@
                                 android:id="@+id/tv_portfolio_change"
                                 android:layout_width="wrap_content"
                                 android:layout_height="wrap_content"
-                                android:background="@color/sl_positive"
-                                android:paddingHorizontal="16dp"
-                                android:paddingVertical="8dp"
+                                android:background="@drawable/bg_icon_dark"
+                                android:paddingHorizontal="12dp"
+                                android:paddingVertical="6dp"
                                 android:text="+0.0%"
-                                android:textColor="@color/sl_text_on_dark"
-                                android:textStyle="bold" />
+                                android:textColor="@color/sl_mint"
+                                android:fontFamily="sans-serif-medium" />
 
                             <TextView
                                 android:layout_width="wrap_content"
@@ -140,8 +133,8 @@
                             android:layout_height="wrap_content"
                             android:text="Optimize your\nportfolio today."
                             android:textColor="@color/sl_positive_dark"
-                            android:textSize="24sp"
-                            android:textStyle="bold" />
+                            android:textSize="26sp"
+                            android:fontFamily="sans-serif-black" />
 
                         <TextView
                             android:layout_width="wrap_content"
@@ -159,7 +152,7 @@
                             android:text="Optimize Portfolio"
                             android:textColor="@color/sl_text_on_dark"
                             app:backgroundTint="@color/sl_navy_card"
-                            app:cornerRadius="@dimen/sl_card_radius_small" />
+                            app:cornerRadius="24dp" />
                     </LinearLayout>
                 </com.google.android.material.card.MaterialCardView>
 
@@ -180,27 +173,30 @@
                         android:textSize="24sp"
                         android:textStyle="bold" />
 
-                    <!-- Buy / Sell buttons -->
-                    <com.google.android.material.button.MaterialButton
-                        android:id="@+id/btn_buy"
-                        style="@style/Widget.Material3.Button.TonalButton"
+                    <!-- Buy / Sell toggle -->
+                    <com.google.android.material.button.MaterialButtonToggleGroup
+                        android:id="@+id/toggle_trade"
                         android:layout_width="wrap_content"
                         android:layout_height="36dp"
-                        android:layout_marginEnd="8dp"
-                        android:text="Buy"
-                        android:textSize="12sp"
-                        app:backgroundTint="@color/sl_navy_card"
-                        android:textColor="@color/sl_text_on_dark" />
+                        app:singleSelection="true"
+                        app:checkedButton="@+id/btn_buy">
 
-                    <com.google.android.material.button.MaterialButton
-                        android:id="@+id/btn_sell"
-                        style="@style/Widget.Material3.Button.OutlinedButton"
-                        android:layout_width="wrap_content"
-                        android:layout_height="36dp"
-                        android:text="Sell"
-                        android:textSize="12sp"
-                        android:textColor="@color/sl_text_primary"
-                        app:strokeColor="@color/sl_stroke" />
+                        <com.google.android.material.button.MaterialButton
+                            android:id="@+id/btn_buy"
+                            style="?attr/materialButtonOutlinedStyle"
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:text="Buy"
+                            android:textSize="12sp" />
+
+                        <com.google.android.material.button.MaterialButton
+                            android:id="@+id/btn_sell"
+                            style="?attr/materialButtonOutlinedStyle"
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:text="Sell"
+                            android:textSize="12sp" />
+                    </com.google.android.material.button.MaterialButtonToggleGroup>
                 </LinearLayout>
 
                 <!-- Loading -->

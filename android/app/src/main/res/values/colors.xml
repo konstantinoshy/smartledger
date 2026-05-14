@@ -3,53 +3,53 @@
     <color name="white">#FFFFFFFF</color>
     <color name="black">#FF000000</color>
 
-    <!-- Brand χρώματα -->
-    <color name="sl_primary">#FF10B981</color>
-    <color name="sl_primary_dark">#FF059669</color>
-    <color name="sl_navy">#FF0A192F</color>
-    <color name="sl_navy_card">#FF0D1C32</color>
+    <!-- Brand Colors: Vibrant FinTech Emerald & Deep Indigo -->
+    <color name="sl_primary">#FF00C853</color> <!-- Vibrant Emerald -->
+    <color name="sl_primary_dark">#FF009624</color>
+    <color name="sl_navy">#FF1E1B4B</color> <!-- Deep Indigo/Navy for high contrast -->
+    <color name="sl_navy_card">#FF312E81</color> <!-- Lighter Indigo for cards -->
 
-    <!-- Επιφάνειες -->
-    <color name="sl_background">#FFF7F9FB</color>
-    <color name="sl_main_bg">#FFFAFAFA</color>
-    <color name="sl_app_bar">#FFF2F4F6</color>
+    <!-- Surfaces -->
+    <color name="sl_background">#F0F2F5</color> <!-- Darker cool gray so white cards POP -->
+    <color name="sl_main_bg">#F0F2F5</color>
+    <color name="sl_app_bar">#00FFFFFF</color> <!-- Transparent app bar -->
     <color name="sl_surface">#FFFFFFFF</color>
     <color name="sl_bottom_nav">#FFFFFFFF</color>
-    <color name="sl_card_gray">#FFE0E3E5</color>
-    <color name="sl_search_bg">#FFECEEF0</color>
-    <color name="sl_chip_inactive_bg">#FFF2F4F6</color>
+    <color name="sl_card_gray">#FFF3F4F6</color>
+    <color name="sl_search_bg">#FFF3F4F6</color>
+    <color name="sl_chip_inactive_bg">#FFF3F4F6</color>
 
-    <!-- Κείμενο -->
-    <color name="sl_text_primary">#FF000000</color>
-    <color name="sl_text_secondary">#FF44474D</color>
-    <color name="sl_text_tertiary">#FF888888</color>
+    <!-- Typography -->
+    <color name="sl_text_primary">#FF111827</color> <!-- Gray 900 -->
+    <color name="sl_text_secondary">#FF4B5563</color> <!-- Gray 600 -->
+    <color name="sl_text_tertiary">#FF9CA3AF</color> <!-- Gray 400 -->
     <color name="sl_text_on_dark">#FFFFFFFF</color>
-    <color name="sl_text_brand_muted">#660A192F</color>
-    <color name="sl_text_overline_muted">#9944474D</color>
-    <color name="sl_text_label_muted">#B344474D</color>
-    <color name="sl_text_hint_muted">#6644474D</color>
-    <color name="sl_text_empty_muted">#8044474D</color>
-    <color name="sl_text_body">#FF4A5568</color>
-    <color name="sl_text_body_muted">#994A5568</color>
-    <color name="sl_text_on_dark_secondary">#99FFFFFF</color>
-    <color name="sl_text_on_primary_muted">#B3FFFFFF</color>
+    <color name="sl_text_brand_muted">#801E1B4B</color>
+    <color name="sl_text_overline_muted">#FF6B7280</color>
+    <color name="sl_text_label_muted">#FF9CA3AF</color>
+    <color name="sl_text_hint_muted">#FF9CA3AF</color>
+    <color name="sl_text_empty_muted">#FF9CA3AF</color>
+    <color name="sl_text_body">#FF374151</color>
+    <color name="sl_text_body_muted">#FF6B7280</color>
+    <color name="sl_text_on_dark_secondary">#CCFFFFFF</color>
+    <color name="sl_text_on_primary_muted">#CCFFFFFF</color>
 
-    <!-- Καταστάσεις UI -->
-    <color name="sl_positive">#FF046D40</color>
-    <color name="sl_positive_dark">#FF0E7144</color>
-    <color name="sl_mint">#FF9AF2BA</color>
-    <color name="sl_mint_on_mint">#CC0E7144</color>
-    <color name="sl_divider">#FFE0E0E0</color>
-    <color name="sl_stroke">#FFC5C6CD</color>
-    <color name="sl_crypto_subtitle">#FF76849F</color>
-    <color name="sl_crypto_negative">#FFFFDAD6</color>
-    <color name="sl_icon_scrim">#1AFFFFFF</color>
-    <color name="sl_warning">#FFD32F2F</color>
+    <!-- UI States -->
+    <color name="sl_positive">#FF10B981</color> <!-- Tailwind Emerald 500 -->
+    <color name="sl_positive_dark">#FF047857</color> <!-- Tailwind Emerald 700 -->
+    <color name="sl_mint">#FFD1FAE5</color> <!-- Tailwind Emerald 100 -->
+    <color name="sl_mint_on_mint">#FF065F46</color>
+    <color name="sl_divider">#FFE5E7EB</color> <!-- Gray 200 -->
+    <color name="sl_stroke">#FFE5E7EB</color>
+    <color name="sl_crypto_subtitle">#FF6B7280</color>
+    <color name="sl_crypto_negative">#FFFEE2E2</color> <!-- Red 100 -->
+    <color name="sl_icon_scrim">#0A000000</color>
+    <color name="sl_warning">#FFEF4444</color> <!-- Red 500 -->
     <color name="sl_amber">#FFF59E0B</color>
     <color name="sl_amber_bg">#FFFEF3C7</color>
-    <color name="sl_search_icon_tint">#8044474D</color>
+    <color name="sl_search_icon_tint">#FF9CA3AF</color>
 
-    <!-- Πλοήγηση -->
-    <color name="sl_nav_selected">#FF1A1A1A</color>
-    <color name="sl_nav_unselected">#FF888888</color>
+    <!-- Navigation -->
+    <color name="sl_nav_selected">#FF111827</color>
+    <color name="sl_nav_unselected">#FF9CA3AF</color>
 </resources>

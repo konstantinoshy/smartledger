@@ -8,9 +8,10 @@
         <item name="colorSecondaryVariant">@color/sl_navy_card</item>
         <item name="colorOnSecondary">@color/sl_text_on_dark</item>
         
-        <!-- Modern Status Bar -->
+        <!-- Modern Status Bar for Dark Mode -->
         <item name="android:statusBarColor">@color/sl_background</item>
-        <item name="android:windowLightStatusBar">true</item>
+        <!-- False means the text will be light (white) on dark background -->
+        <item name="android:windowLightStatusBar">false</item>
         
         <item name="android:navigationBarColor">@color/sl_surface</item>
         <item name="android:windowBackground">@color/sl_background</item>

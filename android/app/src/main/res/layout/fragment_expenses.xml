@@ -22,20 +22,12 @@
                 android:orientation="horizontal"
                 android:paddingEnd="@dimen/sl_toolbar_end_padding">
 
-                <com.google.android.material.imageview.ShapeableImageView
-                    android:layout_width="@dimen/sl_toolbar_logo_size"
-                    android:layout_height="@dimen/sl_toolbar_logo_size"
-                    android:contentDescription="@string/app_name"
-                    android:scaleType="centerCrop"
-                    android:src="@drawable/smartledger_logo"
-                    app:shapeAppearanceOverlay="@style/ShapeAppearance.SmartLedger.Circle" />
+                <!-- Removed redundant logo -->
 
                 <TextView
                     android:layout_width="0dp"
                     android:layout_height="wrap_content"
-                    android:layout_marginStart="16dp"
                     android:layout_weight="1"
-                    android:letterSpacing="0.1"
                     android:text="SmartLedger"
                     android:textColor="@color/sl_text_primary"
                     android:textSize="20sp"
@@ -141,7 +133,7 @@
                     android:layout_height="56dp"
                     android:layout_marginBottom="16dp"
                     app:cardBackgroundColor="@color/sl_search_bg"
-                    app:cardCornerRadius="@dimen/sl_card_radius_medium"
+                    app:cardCornerRadius="28dp"
                     app:cardElevation="0dp">
 
                     <LinearLayout

@@ -7,9 +7,9 @@
     android:clickable="true"
     android:focusable="true"
     android:foreground="?android:attr/selectableItemBackground"
-    app:cardBackgroundColor="@color/sl_chip_inactive_bg"
-    app:cardCornerRadius="@dimen/sl_card_radius_large"
-    app:cardElevation="0dp">
+    app:cardBackgroundColor="@color/sl_surface"
+    app:cardCornerRadius="16dp"
+    app:cardElevation="4dp">
 
     <LinearLayout
         android:layout_width="match_parent"
@@ -51,7 +51,7 @@
                     android:text="Group Name"
                     android:textColor="@color/sl_text_primary"
                     android:textSize="18sp"
-                    android:textStyle="bold" />
+                    android:fontFamily="sans-serif-medium" />
 
                 <TextView
                     android:id="@+id/tv_group_info"
@@ -84,7 +84,7 @@
                 android:text="Your Balance"
                 android:textColor="@color/sl_text_secondary"
                 android:textSize="13sp"
-                android:textStyle="bold" />
+                android:fontFamily="sans-serif-medium" />
 
             <TextView
                 android:id="@+id/tv_group_balance"
@@ -93,7 +93,7 @@
                 android:text="+$0.00"
                 android:textColor="@color/sl_positive"
                 android:textSize="20sp"
-                android:textStyle="bold" />
+                android:fontFamily="sans-serif-black" />
         </LinearLayout>
     </LinearLayout>
 </com.google.android.material.card.MaterialCardView>
