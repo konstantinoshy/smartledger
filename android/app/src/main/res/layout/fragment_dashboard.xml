@@ -28,7 +28,7 @@
                     android:layout_height="@dimen/sl_toolbar_logo_size"
                     android:contentDescription="@string/app_name"
                     android:scaleType="centerCrop"
-                    android:src="@drawable/smartledger_logo"
+                    android:src="@drawable/smartledger_new_logo"
                     app:shapeAppearanceOverlay="@style/ShapeAppearance.SmartLedger.Circle" />
 
                 <TextView
