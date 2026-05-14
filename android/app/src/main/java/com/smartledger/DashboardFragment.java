@@ -220,8 +220,9 @@ public class DashboardFragment extends Fragment {
     }
 
     private void logout() {
+        // Only clear the active session — keep biometric enrollment intact
+        // so the fingerprint button appears on the next login screen
         new SessionManager(requireContext()).clear();
-        new com.smartledger.api.BiometricTokenManager(requireContext()).clear();
         Intent intent = new Intent(requireContext(), LoginActivity.class);
         intent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK | Intent.FLAG_ACTIVITY_CLEAR_TASK);
         startActivity(intent);

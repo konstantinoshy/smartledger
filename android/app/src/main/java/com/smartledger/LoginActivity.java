@@ -84,9 +84,14 @@ public class LoginActivity extends AppCompatActivity {
             return;
         }
 
-        AuthRepository.AuthCallback callback = new AuthRepository.AuthCallback() {
+        AuthRepository.AuthCallback successCallback = new AuthRepository.AuthCallback() {
             @Override
             public void onSuccess(String email) {
+                // If a different account logs in, clear stale biometric tokens
+                String savedEmail = biometricTokenManager.getEmail();
+                if (savedEmail != null && !savedEmail.equals(email)) {
+                    biometricTokenManager.clear();
+                }
                 // After successful password login, offer biometric enrollment
                 offerBiometricEnrollment();
             }
@@ -98,9 +103,26 @@ public class LoginActivity extends AppCompatActivity {
         };
 
         if (register) {
-            authRepository.register(email, password, callback);
+            authRepository.register(email, password, successCallback);
         } else {
-            authRepository.login(email, password, callback);
+            // For login attempts, wrap with a dialog that offers registration on failure
+            authRepository.login(email, password, new AuthRepository.AuthCallback() {
+                @Override
+                public void onSuccess(String email) {
+                    successCallback.onSuccess(email);
+                }
+
+                @Override
+                public void onError(String message) {
+                    new MaterialAlertDialogBuilder(LoginActivity.this)
+                            .setTitle("Account not found")
+                            .setMessage("No account exists for this email. Would you like to create one?")
+                            .setPositiveButton("Create account", (dialog, which) -> authenticate(true))
+                            .setNegativeButton("Cancel", (dialog, which) ->
+                                    Snackbar.make(findViewById(android.R.id.content), message, Snackbar.LENGTH_LONG).show())
+                            .show();
+                }
+            });
         }
     }
 
@@ -113,7 +135,7 @@ public class LoginActivity extends AppCompatActivity {
         boolean biometricsAvailable = biometricManager.canAuthenticate(
                 BiometricManager.Authenticators.BIOMETRIC_WEAK) == BiometricManager.BIOMETRIC_SUCCESS;
 
-        // If device doesn't support biometrics or user already enrolled, skip
+        // If device doesn't support biometrics or user already enrolled (same account), skip
         if (!biometricsAvailable || biometricTokenManager.hasSavedSession()) {
             openMain();
             return;
