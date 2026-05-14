@@ -20,6 +20,7 @@ import retrofit2.http.GET;
 import retrofit2.http.Headers;
 import retrofit2.http.PATCH;
 import retrofit2.http.POST;
+import retrofit2.http.PUT;
 import retrofit2.http.Query;
 
 public interface SmartLedgerApi {
@@ -31,6 +32,9 @@ public interface SmartLedgerApi {
     @POST("auth/v1/token")
     Call<AuthResponse> login(@Query("grant_type") String grantType, @Body AuthRequest request);
 
+    @PUT("auth/v1/user")
+    Call<AuthResponse> updateUser(@Body Map<String, Object> body);
+
     // ─── Expenses ───────────────────────────────────
     @GET("rest/v1/expenses")
     Call<List<ExpenseDto>> getExpenses(
@@ -41,6 +45,9 @@ public interface SmartLedgerApi {
     @Headers("Prefer: return=representation")
     @POST("rest/v1/expenses")
     Call<List<ExpenseDto>> createExpense(@Body CreateExpenseRequest request);
+
+    @DELETE("rest/v1/expenses")
+    Call<Void> deleteExpense(@Query("id") String idFilter);
 
     // ─── Split Groups ───────────────────────────────
     @GET("rest/v1/split_groups")

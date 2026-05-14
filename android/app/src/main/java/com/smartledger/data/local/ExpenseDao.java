@@ -23,4 +23,7 @@ public interface ExpenseDao {
 
     @Query("DELETE FROM expenses")
     void clearAll();
+
+    @androidx.room.Delete
+    void delete(Expense expense);
 }

@@ -1,6 +1,8 @@
 package com.smartledger;
 
+import android.content.Context;
 import android.content.Intent;
+import android.content.SharedPreferences;
 import android.os.Bundle;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -22,6 +24,7 @@ import com.google.android.material.dialog.MaterialAlertDialogBuilder;
 import com.google.android.material.snackbar.Snackbar;
 import com.google.android.material.textfield.TextInputLayout;
 import com.smartledger.adapters.ExpenseAdapter;
+import com.smartledger.api.BiometricTokenManager;
 import com.smartledger.api.SessionManager;
 import com.smartledger.data.ExpenseRepository;
 import com.smartledger.models.Expense;
@@ -86,6 +89,14 @@ public class DashboardFragment extends Fragment {
         }
     }
 
+    @Override
+    public void onHiddenChanged(boolean hidden) {
+        super.onHiddenChanged(hidden);
+        if (!hidden && adapter != null) {
+            loadExpenses();
+        }
+    }
+
     private void loadExpenses() {
         if (progressBar != null) progressBar.setVisibility(View.VISIBLE);
         expenseRepository.getExpenses(new ExpenseRepository.ExpenseListCallback() {
@@ -108,19 +119,23 @@ public class DashboardFragment extends Fragment {
     }
 
     private void updateTotal() {
+        SharedPreferences prefs = requireContext()
+                .getSharedPreferences("smartledger_preferences", Context.MODE_PRIVATE);
+        double budget = prefs.getFloat("monthly_budget", 5000f);
+
         double totalSpent = com.smartledger.utils.FinancialUtils.calculateTotalSpent(expenseList);
-        double liquidity = 5000.00 - totalSpent;
+        double liquidity = budget - totalSpent;
         totalExpensesText.setText(String.format(java.util.Locale.getDefault(), "$%,.2f", liquidity));
         if (monthlySpendText != null) {
             monthlySpendText.setText(String.format(java.util.Locale.getDefault(), "$%,.2f", totalSpent));
         }
-        updateSpendIndicator(totalSpent);
+        updateSpendIndicator(totalSpent, budget);
     }
 
-    private void updateSpendIndicator(double totalSpent) {
+    private void updateSpendIndicator(double totalSpent, double budget) {
         if (spendIndicatorText == null || spendIndicatorIcon == null || getContext() == null) return;
 
-        double percentSpent = com.smartledger.utils.FinancialUtils.calculateBudgetPercentage(totalSpent, 5000.00);
+        double percentSpent = com.smartledger.utils.FinancialUtils.calculateBudgetPercentage(totalSpent, budget);
         boolean highSpend = percentSpent >= 50;
 
         int colorRes = highSpend ? R.color.sl_warning : R.color.sl_positive;
