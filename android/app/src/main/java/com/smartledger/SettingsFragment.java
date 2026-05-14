@@ -40,7 +40,7 @@ public class SettingsFragment extends Fragment {
 
     private static final String PREFS_NAME = "smartledger_preferences";
     private static final String KEY_DARK_MODE = "dark_mode_override";
-    private static final String KEY_MONTHLY_BUDGET = "monthly_budget";
+    private static final String KEY_MONTHLY_BUDGET_PREFIX = "monthly_budget_";
     private static final float DEFAULT_BUDGET = 5000f;
 
     private SessionManager sessionManager;
@@ -258,8 +258,13 @@ public class SettingsFragment extends Fragment {
         root.findViewById(R.id.row_budget).setOnClickListener(v -> showBudgetDialog());
     }
 
+    private String getBudgetKey() {
+        String userId = sessionManager.getUserId();
+        return KEY_MONTHLY_BUDGET_PREFIX + (userId != null ? userId : "default");
+    }
+
     private void refreshBudgetDisplay() {
-        float budget = preferences.getFloat(KEY_MONTHLY_BUDGET, DEFAULT_BUDGET);
+        float budget = preferences.getFloat(getBudgetKey(), DEFAULT_BUDGET);
         tvBudgetValue.setText(String.format(Locale.getDefault(), "€%,.2f", budget));
     }
 
@@ -270,7 +275,7 @@ public class SettingsFragment extends Fragment {
         TextInputLayout tilBudget = dialogView.findViewById(R.id.til_budget);
         TextInputEditText editBudget = dialogView.findViewById(R.id.edit_budget);
 
-        float currentBudget = preferences.getFloat(KEY_MONTHLY_BUDGET, DEFAULT_BUDGET);
+        float currentBudget = preferences.getFloat(getBudgetKey(), DEFAULT_BUDGET);
         editBudget.setText(String.valueOf(currentBudget));
         editBudget.selectAll();
 
@@ -300,7 +305,7 @@ public class SettingsFragment extends Fragment {
                             return;
                         }
                         preferences.edit()
-                                .putFloat(KEY_MONTHLY_BUDGET, value)
+                                .putFloat(getBudgetKey(), value)
                                 .apply();
                         refreshBudgetDisplay();
                         dialog.dismiss();

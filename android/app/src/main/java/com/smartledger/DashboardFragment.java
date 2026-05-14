@@ -121,7 +121,9 @@ public class DashboardFragment extends Fragment {
     private void updateTotal() {
         SharedPreferences prefs = requireContext()
                 .getSharedPreferences("smartledger_preferences", Context.MODE_PRIVATE);
-        double budget = prefs.getFloat("monthly_budget", 5000f);
+        String userId = new SessionManager(requireContext()).getUserId();
+        String budgetKey = "monthly_budget_" + (userId != null ? userId : "default");
+        double budget = prefs.getFloat(budgetKey, 5000f);
 
         double totalSpent = com.smartledger.utils.FinancialUtils.calculateTotalSpent(expenseList);
         double liquidity = budget - totalSpent;
