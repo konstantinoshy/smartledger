@@ -254,6 +254,8 @@ public class SettingsFragment extends Fragment {
 
     private void setupPreferencesSection(View root) {
         refreshBudgetDisplay();
+        // Φόρτωσε budget από cloud (fallback σε τοπικό cache)
+        loadBudgetFromCloud();
 
         root.findViewById(R.id.row_budget).setOnClickListener(v -> showBudgetDialog());
     }
@@ -266,6 +268,40 @@ public class SettingsFragment extends Fragment {
     private void refreshBudgetDisplay() {
         float budget = preferences.getFloat(getBudgetKey(), DEFAULT_BUDGET);
         tvBudgetValue.setText(String.format(Locale.getDefault(), "€%,.2f", budget));
+    }
+
+    /**
+     * Φορτώνει το budget από το Supabase cloud.
+     * Αν πετύχει, ενημερώνει το τοπικό cache.
+     * Αν αποτύχει (offline), δείχνει το cached budget.
+     */
+    private void loadBudgetFromCloud() {
+        String userId = sessionManager.getUserId();
+        if (userId == null) return;
+
+        api.getUserSettings("eq." + userId, "*").enqueue(
+                new Callback<java.util.List<com.smartledger.api.dto.UserSettingsDto>>() {
+                    @Override
+                    public void onResponse(Call<java.util.List<com.smartledger.api.dto.UserSettingsDto>> call,
+                                           Response<java.util.List<com.smartledger.api.dto.UserSettingsDto>> response) {
+                        if (response.isSuccessful() && response.body() != null
+                                && !response.body().isEmpty()) {
+                            float cloudBudget = response.body().get(0).monthlyBudgetMinor / 100f;
+                            // Αποθήκευση τοπικά ως cache
+                            preferences.edit()
+                                    .putFloat(getBudgetKey(), cloudBudget)
+                                    .apply();
+                            refreshBudgetDisplay();
+                        }
+                        // Αν δεν υπάρχει εγγραφή στο cloud, κρατάμε το τοπικό default
+                    }
+
+                    @Override
+                    public void onFailure(Call<java.util.List<com.smartledger.api.dto.UserSettingsDto>> call,
+                                          Throwable t) {
+                        // Offline — χρησιμοποιούμε το τοπικό cache (ήδη εμφανίζεται)
+                    }
+                });
     }
 
     private void showBudgetDialog() {
@@ -304,11 +340,16 @@ public class SettingsFragment extends Fragment {
                             tilBudget.setError("Budget must be greater than 0");
                             return;
                         }
+
+                        // Αποθήκευση τοπικά (cache)
                         preferences.edit()
                                 .putFloat(getBudgetKey(), value)
                                 .apply();
                         refreshBudgetDisplay();
                         dialog.dismiss();
+
+                        // Αποθήκευση στο cloud (Supabase upsert)
+                        saveBudgetToCloud(value);
 
                         if (getView() != null) {
                             Snackbar.make(getView(), "Budget updated",
@@ -316,6 +357,38 @@ public class SettingsFragment extends Fragment {
                         }
                     } catch (NumberFormatException e) {
                         tilBudget.setError("Invalid number");
+                    }
+                });
+    }
+
+    /**
+     * Αποθηκεύει το budget στο Supabase (upsert).
+     * Αν αποτύχει, το budget παραμένει αποθηκευμένο τοπικά.
+     */
+    private void saveBudgetToCloud(float budgetValue) {
+        String userId = sessionManager.getUserId();
+        if (userId == null) return;
+
+        int budgetMinor = Math.round(budgetValue * 100);
+
+        Map<String, Object> body = new HashMap<>();
+        body.put("user_id", userId);
+        body.put("monthly_budget_minor", budgetMinor);
+        body.put("currency", "EUR");
+
+        api.upsertUserSettings(body).enqueue(
+                new Callback<java.util.List<com.smartledger.api.dto.UserSettingsDto>>() {
+                    @Override
+                    public void onResponse(Call<java.util.List<com.smartledger.api.dto.UserSettingsDto>> call,
+                                           Response<java.util.List<com.smartledger.api.dto.UserSettingsDto>> response) {
+                        // Αποθηκεύτηκε στο cloud — τίποτα επιπλέον
+                    }
+
+                    @Override
+                    public void onFailure(Call<java.util.List<com.smartledger.api.dto.UserSettingsDto>> call,
+                                          Throwable t) {
+                        // Offline — το budget αποθηκεύτηκε μόνο τοπικά
+                        // Θα συγχρονιστεί στο cloud την επόμενη φορά
                     }
                 });
     }

@@ -116,4 +116,17 @@ public interface SmartLedgerApi {
     @Headers("Prefer: return=representation")
     @POST("rest/v1/portfolio_transactions")
     Call<List<PortfolioTransactionDto>> createPortfolioTransaction(@Body Map<String, Object> body);
+
+    // ─── User Settings (Budget) ─────────────────────
+    @GET("rest/v1/user_settings")
+    Call<List<com.smartledger.api.dto.UserSettingsDto>> getUserSettings(
+            @Query("user_id") String userIdFilter,
+            @Query("select") String select
+    );
+
+    @Headers("Prefer: return=representation,resolution=merge-duplicates")
+    @POST("rest/v1/user_settings")
+    Call<List<com.smartledger.api.dto.UserSettingsDto>> upsertUserSettings(
+            @Body Map<String, Object> body
+    );
 }
