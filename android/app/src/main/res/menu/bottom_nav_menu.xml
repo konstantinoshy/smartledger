@@ -16,4 +16,8 @@
         android:id="@+id/nav_crypto"
         android:icon="@drawable/ic_crypto"
         android:title="Crypto" />
+    <item
+        android:id="@+id/nav_settings"
+        android:icon="@drawable/ic_settings"
+        android:title="Settings" />
 </menu>

@@ -16,6 +16,7 @@ public class MainActivity extends AppCompatActivity {
     private static final String TAG_EXPENSES = "expenses";
     private static final String TAG_SPLITS = "splits";
     private static final String TAG_CRYPTO = "crypto";
+    private static final String TAG_SETTINGS = "settings";
 
     private int selectedNavItemId = R.id.nav_dashboard;
 
@@ -60,6 +61,7 @@ public class MainActivity extends AppCompatActivity {
         hideFragmentIfPresent(fragmentManager, transaction, TAG_EXPENSES);
         hideFragmentIfPresent(fragmentManager, transaction, TAG_SPLITS);
         hideFragmentIfPresent(fragmentManager, transaction, TAG_CRYPTO);
+        hideFragmentIfPresent(fragmentManager, transaction, TAG_SETTINGS);
 
         if (target == null) {
             target = createFragment(itemId);
@@ -92,6 +94,8 @@ public class MainActivity extends AppCompatActivity {
             return new SplitsFragment();
         } else if (itemId == R.id.nav_crypto) {
             return new CryptoFragment();
+        } else if (itemId == R.id.nav_settings) {
+            return new SettingsFragment();
         }
         throw new IllegalArgumentException("Unknown navigation item: " + itemId);
     }
@@ -105,6 +109,8 @@ public class MainActivity extends AppCompatActivity {
             return TAG_SPLITS;
         } else if (itemId == R.id.nav_crypto) {
             return TAG_CRYPTO;
+        } else if (itemId == R.id.nav_settings) {
+            return TAG_SETTINGS;
         }
         return null;
     }

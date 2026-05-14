@@ -11,8 +11,15 @@ import android.widget.TextView;
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.fragment.app.Fragment;
+import androidx.recyclerview.widget.ItemTouchHelper;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
+
+import android.graphics.Canvas;
+import android.graphics.Color;
+import android.graphics.drawable.ColorDrawable;
+import android.graphics.drawable.Drawable;
+import androidx.core.content.ContextCompat;
 
 import com.google.android.material.chip.Chip;
 import com.google.android.material.chip.ChipGroup;
@@ -56,6 +63,9 @@ public class ExpensesFragment extends Fragment {
         adapter = new ExpenseAdapter(displayList);
         recyclerView.setLayoutManager(new LinearLayoutManager(getContext()));
         recyclerView.setAdapter(adapter);
+        
+        setupSwipeToDelete();
+        
         loadExpenses();
 
         view.findViewById(R.id.btn_add_expense).setOnClickListener(v -> showAddExpenseDialog());
@@ -69,6 +79,83 @@ public class ExpensesFragment extends Fragment {
     public void onResume() {
         super.onResume();
         loadExpenses();
+    }
+
+    @Override
+    public void onHiddenChanged(boolean hidden) {
+        super.onHiddenChanged(hidden);
+        if (!hidden) {
+            loadExpenses();
+        }
+    }
+
+    private void setupSwipeToDelete() {
+        ItemTouchHelper.SimpleCallback simpleItemTouchCallback = new ItemTouchHelper.SimpleCallback(0, ItemTouchHelper.LEFT) {
+            private final ColorDrawable background = new ColorDrawable(Color.parseColor("#EF4444"));
+            private Drawable deleteIcon;
+
+            @Override
+            public boolean onMove(@NonNull RecyclerView recyclerView, @NonNull RecyclerView.ViewHolder viewHolder, @NonNull RecyclerView.ViewHolder target) {
+                return false;
+            }
+
+            @Override
+            public void onChildDraw(@NonNull Canvas c, @NonNull RecyclerView recyclerView, @NonNull RecyclerView.ViewHolder viewHolder, float dX, float dY, int actionState, boolean isCurrentlyActive) {
+                super.onChildDraw(c, recyclerView, viewHolder, dX, dY, actionState, isCurrentlyActive);
+                View itemView = viewHolder.itemView;
+
+                if (deleteIcon == null && getContext() != null) {
+                    deleteIcon = ContextCompat.getDrawable(getContext(), android.R.drawable.ic_menu_delete);
+                    if (deleteIcon != null) {
+                        deleteIcon.setTint(Color.WHITE);
+                    }
+                }
+
+                if (dX < 0 && deleteIcon != null) { 
+                    int iconMargin = (itemView.getHeight() - deleteIcon.getIntrinsicHeight()) / 2;
+                    int iconTop = itemView.getTop() + (itemView.getHeight() - deleteIcon.getIntrinsicHeight()) / 2;
+                    int iconBottom = iconTop + deleteIcon.getIntrinsicHeight();
+                    int iconLeft = itemView.getRight() - iconMargin - deleteIcon.getIntrinsicWidth();
+                    int iconRight = itemView.getRight() - iconMargin;
+
+                    background.setBounds(itemView.getRight() + ((int) dX) - 20, itemView.getTop(), itemView.getRight(), itemView.getBottom());
+                    background.draw(c);
+
+                    deleteIcon.setBounds(iconLeft, iconTop, iconRight, iconBottom);
+                    deleteIcon.draw(c);
+                }
+            }
+
+            @Override
+            public void onSwiped(@NonNull RecyclerView.ViewHolder viewHolder, int direction) {
+                int position = viewHolder.getAdapterPosition();
+                Expense expenseToDelete = displayList.get(position);
+
+                displayList.remove(position);
+                adapter.notifyItemRemoved(position);
+
+                expenseRepository.deleteExpense(expenseToDelete, new ExpenseRepository.DeleteCallback() {
+                    @Override
+                    public void onSuccess() {
+                        loadExpenses();
+                        if (getView() != null) {
+                            Snackbar.make(getView(), "Expense deleted", Snackbar.LENGTH_SHORT).show();
+                        }
+                    }
+
+                    @Override
+                    public void onError(String message) {
+                        displayList.add(position, expenseToDelete);
+                        adapter.notifyItemInserted(position);
+                        if (getView() != null) {
+                            Snackbar.make(getView(), message, Snackbar.LENGTH_LONG).show();
+                        }
+                    }
+                });
+            }
+        };
+
+        new ItemTouchHelper(simpleItemTouchCallback).attachToRecyclerView(recyclerView);
     }
 
     private void setupChips(View view) {

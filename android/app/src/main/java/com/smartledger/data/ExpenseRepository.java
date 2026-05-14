@@ -39,6 +39,11 @@ public class ExpenseRepository {
         void onError(String message);
     }
 
+    public interface DeleteCallback {
+        void onSuccess();
+        void onError(String message);
+    }
+
     private static ExpenseRepository instance;
 
     private final SessionManager sessionManager;
@@ -142,6 +147,25 @@ public class ExpenseRepository {
             @Override
             public void onFailure(Call<List<ExpenseDto>> call, Throwable t) {
                 callback.onError("Cannot add expenses while offline.");
+            }
+        });
+    }
+
+    public void deleteExpense(Expense expense, DeleteCallback callback) {
+        api.deleteExpense("eq." + expense.getId()).enqueue(new Callback<Void>() {
+            @Override
+            public void onResponse(Call<Void> call, Response<Void> response) {
+                if (!response.isSuccessful()) {
+                    callback.onError("Could not delete expense from server.");
+                    return;
+                }
+                executor.execute(() -> expenseDao.delete(expense));
+                callback.onSuccess();
+            }
+
+            @Override
+            public void onFailure(Call<Void> call, Throwable t) {
+                callback.onError("Cannot delete expenses while offline.");
             }
         });
     }
