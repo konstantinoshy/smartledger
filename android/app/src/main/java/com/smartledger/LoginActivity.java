@@ -8,15 +8,20 @@ import androidx.biometric.BiometricManager;
 import androidx.biometric.BiometricPrompt;
 import androidx.core.content.ContextCompat;
 
+import com.google.android.material.dialog.MaterialAlertDialogBuilder;
 import com.google.android.material.snackbar.Snackbar;
 import com.google.android.material.textfield.TextInputLayout;
 import com.smartledger.api.AuthRepository;
+import com.smartledger.api.BiometricTokenManager;
+import com.smartledger.api.SessionManager;
 
 import java.util.concurrent.Executor;
 
 public class LoginActivity extends AppCompatActivity {
 
     private AuthRepository authRepository;
+    private SessionManager sessionManager;
+    private BiometricTokenManager biometricTokenManager;
     private TextInputLayout tilEmail;
     private TextInputLayout tilPassword;
 
@@ -26,6 +31,10 @@ public class LoginActivity extends AppCompatActivity {
         setContentView(R.layout.activity_login);
 
         authRepository = new AuthRepository(this);
+        sessionManager = new SessionManager(this);
+        biometricTokenManager = new BiometricTokenManager(this);
+
+        // If already logged in via normal session, skip login screen
         if (authRepository.isLoggedIn()) {
             openMain();
             return;
@@ -37,9 +46,15 @@ public class LoginActivity extends AppCompatActivity {
         findViewById(R.id.btn_google_login).setOnClickListener(v -> authenticate(false));
         findViewById(R.id.btn_register).setOnClickListener(v -> authenticate(true));
 
+        // Show biometric button only if:
+        // 1. The device supports biometrics AND
+        // 2. The user has previously enrolled (saved tokens exist)
         android.view.View btnBiometric = findViewById(R.id.btn_biometric);
         BiometricManager biometricManager = BiometricManager.from(this);
-        if (biometricManager.canAuthenticate(BiometricManager.Authenticators.BIOMETRIC_WEAK) == BiometricManager.BIOMETRIC_SUCCESS) {
+        boolean biometricsAvailable = biometricManager.canAuthenticate(
+                BiometricManager.Authenticators.BIOMETRIC_WEAK) == BiometricManager.BIOMETRIC_SUCCESS;
+
+        if (biometricsAvailable && biometricTokenManager.hasSavedSession()) {
             btnBiometric.setVisibility(android.view.View.VISIBLE);
             btnBiometric.setOnClickListener(v -> showBiometricPrompt());
         } else {
@@ -72,7 +87,8 @@ public class LoginActivity extends AppCompatActivity {
         AuthRepository.AuthCallback callback = new AuthRepository.AuthCallback() {
             @Override
             public void onSuccess(String email) {
-                openMain();
+                // After successful password login, offer biometric enrollment
+                offerBiometricEnrollment();
             }
 
             @Override
@@ -88,11 +104,52 @@ public class LoginActivity extends AppCompatActivity {
         }
     }
 
+    /**
+     * After a successful email/password login, check if the device supports
+     * biometrics and offer the user to enable fingerprint login for next time.
+     */
+    private void offerBiometricEnrollment() {
+        BiometricManager biometricManager = BiometricManager.from(this);
+        boolean biometricsAvailable = biometricManager.canAuthenticate(
+                BiometricManager.Authenticators.BIOMETRIC_WEAK) == BiometricManager.BIOMETRIC_SUCCESS;
+
+        // If device doesn't support biometrics or user already enrolled, skip
+        if (!biometricsAvailable || biometricTokenManager.hasSavedSession()) {
+            openMain();
+            return;
+        }
+
+        new MaterialAlertDialogBuilder(this)
+                .setTitle("Enable Fingerprint Login")
+                .setMessage("Would you like to use your fingerprint to log in next time? " +
+                        "Your session will be stored securely using AES-256 encryption.")
+                .setIcon(R.drawable.ic_fingerprint)
+                .setPositiveButton("Enable", (dialog, which) -> {
+                    // Save current session tokens to encrypted biometric store
+                    biometricTokenManager.saveTokens(
+                            sessionManager.getToken(),
+                            sessionManager.getRefreshToken(),
+                            sessionManager.getUserId(),
+                            sessionManager.getEmail()
+                    );
+                    Snackbar.make(findViewById(android.R.id.content),
+                            "Fingerprint login enabled!", Snackbar.LENGTH_SHORT).show();
+                    openMain();
+                })
+                .setNegativeButton("Not now", (dialog, which) -> openMain())
+                .setCancelable(false)
+                .show();
+    }
+
     private void openMain() {
         startActivity(new Intent(LoginActivity.this, MainActivity.class));
         finish();
     }
 
+    /**
+     * Show the system biometric prompt. On success, restore the encrypted
+     * tokens into the active SessionManager and navigate to the main screen.
+     */
     private void showBiometricPrompt() {
         Executor executor = ContextCompat.getMainExecutor(this);
         BiometricPrompt biometricPrompt = new BiometricPrompt(LoginActivity.this,
@@ -107,8 +164,18 @@ public class LoginActivity extends AppCompatActivity {
             @Override
             public void onAuthenticationSucceeded(BiometricPrompt.AuthenticationResult result) {
                 super.onAuthenticationSucceeded(result);
+
+                // Restore the encrypted session into the active SessionManager
+                sessionManager.saveSession(
+                        biometricTokenManager.getToken(),
+                        biometricTokenManager.getRefreshToken(),
+                        biometricTokenManager.getUserId(),
+                        biometricTokenManager.getEmail()
+                );
+
                 Snackbar.make(findViewById(android.R.id.content),
-                        "Authentication succeeded!", Snackbar.LENGTH_SHORT).show();
+                        "Welcome back, " + biometricTokenManager.getEmail() + "!",
+                        Snackbar.LENGTH_SHORT).show();
                 openMain();
             }
 
@@ -116,14 +183,14 @@ public class LoginActivity extends AppCompatActivity {
             public void onAuthenticationFailed() {
                 super.onAuthenticationFailed();
                 Snackbar.make(findViewById(android.R.id.content),
-                        "Authentication failed", Snackbar.LENGTH_SHORT).show();
+                        "Fingerprint not recognized. Try again.", Snackbar.LENGTH_SHORT).show();
             }
         });
 
         BiometricPrompt.PromptInfo promptInfo = new BiometricPrompt.PromptInfo.Builder()
-                .setTitle("Biometric login for SmartLedger")
-                .setSubtitle("Log in using your biometric credential")
-                .setNegativeButtonText("Cancel")
+                .setTitle("Biometric Login")
+                .setSubtitle("Authenticate to access " + biometricTokenManager.getEmail())
+                .setNegativeButtonText("Use password instead")
                 .build();
 
         biometricPrompt.authenticate(promptInfo);

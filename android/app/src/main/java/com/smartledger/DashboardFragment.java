@@ -221,6 +221,7 @@ public class DashboardFragment extends Fragment {
 
     private void logout() {
         new SessionManager(requireContext()).clear();
+        new com.smartledger.api.BiometricTokenManager(requireContext()).clear();
         Intent intent = new Intent(requireContext(), LoginActivity.class);
         intent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK | Intent.FLAG_ACTIVITY_CLEAR_TASK);
         startActivity(intent);
