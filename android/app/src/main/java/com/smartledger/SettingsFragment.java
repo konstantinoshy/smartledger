@@ -267,7 +267,7 @@ public class SettingsFragment extends Fragment {
 
     private void refreshBudgetDisplay() {
         float budget = preferences.getFloat(getBudgetKey(), DEFAULT_BUDGET);
-        tvBudgetValue.setText(String.format(Locale.getDefault(), "€%,.2f", budget));
+        tvBudgetValue.setText(String.format(Locale.getDefault(), "$%,.2f", budget));
     }
 
     /**
@@ -374,7 +374,7 @@ public class SettingsFragment extends Fragment {
         Map<String, Object> body = new HashMap<>();
         body.put("user_id", userId);
         body.put("monthly_budget_minor", budgetMinor);
-        body.put("currency", "EUR");
+        body.put("currency", "USD");
 
         api.upsertUserSettings(body).enqueue(
                 new Callback<java.util.List<com.smartledger.api.dto.UserSettingsDto>>() {
