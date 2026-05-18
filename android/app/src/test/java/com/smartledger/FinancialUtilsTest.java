@@ -54,4 +54,27 @@ public class FinancialUtilsTest {
         // Πρέπει να επιστρέψει 0 για να μη "σκάσει" η εφαρμογή (Infinity/NaN error)
         assertEquals(0.0, percentage, 0.001); 
     }
+
+    @Test
+    public void testCalculateCurrentMonthSpent() {
+        List<Expense> expenses = new ArrayList<>();
+        
+        java.util.Calendar cal = java.util.Calendar.getInstance();
+        
+        // Expense in current month
+        expenses.add(new Expense("u1", 50.00, "Food", "Lunch", cal.getTime()));
+        
+        // Expense from previous month
+        cal.add(java.util.Calendar.MONTH, -1);
+        expenses.add(new Expense("u1", 100.00, "Rent", "Utility", cal.getTime()));
+        
+        // Expense from next year
+        cal.add(java.util.Calendar.YEAR, 1);
+        expenses.add(new Expense("u1", 200.00, "Travel", "Flight", cal.getTime()));
+
+        double total = FinancialUtils.calculateCurrentMonthSpent(expenses);
+        
+        // Should only sum the 50.00 from the current month
+        assertEquals(50.00, total, 0.001);
+    }
 }

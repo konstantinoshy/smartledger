@@ -227,7 +227,7 @@ public class ExpensesFragment extends Fragment {
 
     private void updateMonthlySpend() {
         if (tvMonthlySpend == null) return;
-        double total = com.smartledger.utils.FinancialUtils.calculateTotalSpent(allExpenses);
+        double total = com.smartledger.utils.FinancialUtils.calculateCurrentMonthSpent(allExpenses);
         tvMonthlySpend.setText(String.format(java.util.Locale.getDefault(), "$%,.2f", total));
     }
 

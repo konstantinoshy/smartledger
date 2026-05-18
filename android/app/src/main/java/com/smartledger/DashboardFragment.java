@@ -125,7 +125,7 @@ public class DashboardFragment extends Fragment {
         String budgetKey = "monthly_budget_" + (userId != null ? userId : "default");
         double budget = prefs.getFloat(budgetKey, 5000f);
 
-        double totalSpent = com.smartledger.utils.FinancialUtils.calculateTotalSpent(expenseList);
+        double totalSpent = com.smartledger.utils.FinancialUtils.calculateCurrentMonthSpent(expenseList);
         double liquidity = budget - totalSpent;
         totalExpensesText.setText(String.format(java.util.Locale.getDefault(), "$%,.2f", liquidity));
         if (monthlySpendText != null) {
