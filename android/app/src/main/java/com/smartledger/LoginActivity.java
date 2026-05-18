@@ -187,18 +187,40 @@ public class LoginActivity extends AppCompatActivity {
             public void onAuthenticationSucceeded(BiometricPrompt.AuthenticationResult result) {
                 super.onAuthenticationSucceeded(result);
 
-                // Restore the encrypted session into the active SessionManager
-                sessionManager.saveSession(
-                        biometricTokenManager.getToken(),
-                        biometricTokenManager.getRefreshToken(),
-                        biometricTokenManager.getUserId(),
-                        biometricTokenManager.getEmail()
-                );
+                String refreshToken = biometricTokenManager.getRefreshToken();
+                if (refreshToken == null || refreshToken.isEmpty()) {
+                    Snackbar.make(findViewById(android.R.id.content),
+                            "Session expired. Please log in with password.", Snackbar.LENGTH_LONG).show();
+                    return;
+                }
 
                 Snackbar.make(findViewById(android.R.id.content),
-                        "Welcome back, " + biometricTokenManager.getEmail() + "!",
-                        Snackbar.LENGTH_SHORT).show();
-                openMain();
+                        "Refreshing session...", Snackbar.LENGTH_SHORT).show();
+
+                authRepository.refreshToken(refreshToken, new AuthRepository.AuthCallback() {
+                    @Override
+                    public void onSuccess(String email) {
+                        // Update encrypted tokens in case the refresh token was rotated
+                        biometricTokenManager.saveTokens(
+                                sessionManager.getToken(),
+                                sessionManager.getRefreshToken(),
+                                sessionManager.getUserId(),
+                                sessionManager.getEmail()
+                        );
+
+                        Snackbar.make(findViewById(android.R.id.content),
+                                "Welcome back, " + email + "!",
+                                Snackbar.LENGTH_SHORT).show();
+                        openMain();
+                    }
+
+                    @Override
+                    public void onError(String message) {
+                        biometricTokenManager.clear();
+                        Snackbar.make(findViewById(android.R.id.content),
+                                "Session expired. Please log in with your password.", Snackbar.LENGTH_LONG).show();
+                    }
+                });
             }
 
             @Override

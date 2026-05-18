@@ -32,6 +32,9 @@ public interface SmartLedgerApi {
     @POST("auth/v1/token")
     Call<AuthResponse> login(@Query("grant_type") String grantType, @Body AuthRequest request);
 
+    @POST("auth/v1/token")
+    Call<AuthResponse> refreshToken(@Query("grant_type") String grantType, @Body com.smartledger.api.dto.RefreshTokenRequest request);
+
     @PUT("auth/v1/user")
     Call<AuthResponse> updateUser(@Body Map<String, Object> body);
 

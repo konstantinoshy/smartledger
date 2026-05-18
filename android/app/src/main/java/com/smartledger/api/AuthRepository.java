@@ -36,6 +36,10 @@ public class AuthRepository {
         authenticate(api.register(new AuthRequest(email, password)), callback);
     }
 
+    public void refreshToken(String refreshToken, AuthCallback callback) {
+        authenticate(api.refreshToken("refresh_token", new com.smartledger.api.dto.RefreshTokenRequest(refreshToken)), callback);
+    }
+
     private void authenticate(Call<AuthResponse> call, AuthCallback callback) {
         call.enqueue(new Callback<AuthResponse>() {
             @Override
