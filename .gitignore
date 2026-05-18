@@ -25,3 +25,6 @@ build/
 .idea/
 .vscode/
 android/.vscode/
+
+# Παραγόμενα αρχεία
+repo-full-dump.txt
