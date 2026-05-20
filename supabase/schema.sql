@@ -239,7 +239,7 @@ with check (auth.uid() = user_id);
 create table if not exists public.user_settings (
     user_id     uuid primary key references auth.users(id) on delete cascade,
     monthly_budget_minor integer not null default 500000,
-    currency    char(3) not null default 'EUR',
+    currency    char(3) not null default 'USD', -- Ενοποίηση νομίσματος σε USD
     updated_at  timestamptz not null default now()
 );
 
